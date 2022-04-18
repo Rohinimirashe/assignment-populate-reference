@@ -42,7 +42,7 @@ const fetchbooks = async function (req, res) {
 }
 
 const updateBooks = async function (req, res) {
-    // update hardcover to true for few books
+     
     let hardCOverPublishers = await publisherModel.find({name : {$in:['Penguin','HarperCollins'] }}).select({_id:1})
     let arrayOfPublishers = []
     
@@ -52,6 +52,18 @@ const updateBooks = async function (req, res) {
     }
     
     let books = await bookModel.updateMany({publisher: {$in: arrayOfPublishers}},{isHardCover: true})
+    //5 b
+    const priceUpdate= async function (req, res){
+    let author_detail= await authorModel.find({rating:{$gt:3.5}}).select({"_id":1})
+     
+    await bookModel.updateMany(
+        {author:{$in:author_detail}},
+        {$inc:{price:10}}
+    )
+    let saved = await bookModel.find()
+    res.send({data:saved})
+    }
+
 
     res.send({data: books})
 }
